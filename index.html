@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Journey — OCIA Online</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1B2A4A;
+    --navy-light: #253759;
+    --ivory: #F9F5EE;
+    --ivory-dark: #EDE8DF;
+    --gold: #C9922A;
+    --gold-light: #E8B96A;
+    --sage: #6B8F71;
+    --terra: #C4704F;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --white: #FFFFFF;
+    --shadow: 0 2px 20px rgba(27,42,74,0.12);
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    background: var(--ivory);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* ── AUTH SCREEN ── */
+  #auth-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--navy);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #auth-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 60%, rgba(201,146,42,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(107,143,113,0.1) 0%, transparent 50%);
+  }
+
+  .auth-card {
+    position: relative;
+    background: var(--white);
+    border-radius: 16px;
+    padding: 52px 48px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+  }
+
+  .auth-symbol {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .auth-symbol svg {
+    width: 48px;
+    height: 48px;
+  }
+
+  .auth-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    color: var(--navy);
+    text-align: center;
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+
+  .auth-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-bottom: 36px;
+  }
+
+  .auth-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 6px;
+    margin-top: 20px;
+  }
+
+  .auth-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--ivory-dark);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    background: var(--ivory);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  .auth-input:focus {
+    border-color: var(--gold);
+    background: var(--white);
+  }
+
+  .auth-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 28px;
+    letter-spacing: 0.02em;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .auth-btn:hover { background: var(--navy-light); }
+  .auth-btn:active { transform: scale(0.99); }
+
+  .auth-error {
+    color: #c0392b;
+    font-size: 0.85rem;
+    margin-top: 10px;
+    display: none;
+  }
+
+  .auth-demo {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: var(--ivory);
+    padding: 10px 14px;
+    border-radius: 6px;
+  }
+
+  .auth-demo strong { color: var(--navy); }
+
+  /* ── MAIN APP ── */
+  #app {
+    display: none;
+    min-height: 100vh;
+  }
+
+  /* TOP HEADER */
+  .top-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 0 32px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    color: var(--white);
+    letter-spacing: 0.02em;
+  }
+
+  .header-brand svg { flex-shrink: 0; }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .user-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--navy);
+  }
+
+  .logout-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--white);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+  }
+
+  .logout-btn:hover { background: rgba(255,255,255,0.2); }
+
+  /* ── LAYOUT ── */
+  .app-body {
+    display: flex;
+    min-height: calc(100vh - 60px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background: var(--white);
+    border-right: 1px solid var(--ivory-dark);
+    padding: 28px 20px;
+    position: sticky;
+    top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 12px;
+    margin-bottom: 8px;
+    margin-top: 20px;
+  }
+
+  .sidebar-section-label:first-child { margin-top: 0; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .nav-item:hover { background: var(--ivory); color: var(--navy); }
+
+  .nav-item.active {
+    background: rgba(27,42,74,0.08);
+    color: var(--navy);
+    font-weight: 600;
+  }
+
+  .nav-item .nav-status {
+    margin-left: auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+  }
+
+  .nav-status.locked { background: var(--ivory-dark); color: var(--text-muted); }
+  .nav-status.available { background: var(--ivory-dark); color: var(--gold); border: 1.5px solid var(--gold); }
+  .nav-status.done { background: var(--sage); color: white; }
+  .nav-status.sponsor-required { background: #fff3e0; color: var(--gold); border: 1.5px solid var(--gold-light); }
+
+  /* Journey candle progress */
+  .journey-progress {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--ivory-dark);
+  }
+
+  .candle-container {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .candle-wrap {
+    position: relative;
+    width: 28px;
+  }
+
+  .candle-body {
+    width: 22px;
+    height: 70px;
+    background: var(--ivory-dark);
+    border-radius: 4px 4px 2px 2px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .candle-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, var(--gold), var(--gold-light));
+    transition: height 0.8s ease;
+    border-radius: 0 0 2px 2px;
+  }
+
+  .candle-flame {
+    width: 14px;
+    height: 20px;
+    margin: 0 auto 2px;
+    background: radial-gradient(ellipse at 50% 80%, var(--gold) 0%, var(--gold-light) 50%, transparent 100%);
+    border-radius: 50% 50% 35% 35%;
+    animation: flicker 2.5s ease-in-out infinite alternate;
+    position: relative;
+  }
+
+  @keyframes flicker {
+    0% { transform: scaleX(1) scaleY(1) rotate(-1deg); opacity: 0.9; }
+    100% { transform: scaleX(0.92) scaleY(1.05) rotate(1deg); opacity: 1; }
+  }
+
+  .progress-text { flex: 1; }
+  .progress-label { font-size: 0.75rem; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
+  .progress-sub { font-size: 0.7rem; color: var(--text-muted); }
+
+  /* ── MAIN CONTENT ── */
+  .main-content {
+    flex: 1;
+    padding: 40px 48px;
+    max-width: 860px;
+    min-width: 0;
+  }
+
+  /* PAGE: DASHBOARD */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .page-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.6rem;
+    color: var(--navy);
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .page-intro {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 580px;
+    margin-bottom: 36px;
+    line-height: 1.7;
+  }
+
+  /* Sponsor Card */
+  .sponsor-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 32px;
+    border-left: 4px solid var(--gold);
+  }
+
+  .sponsor-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--navy), var(--navy-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .sponsor-details h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: var(--navy);
+    margin-bottom: 2px;
+  }
+
+  .sponsor-details p { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 2px; }
+
+  .sponsor-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(107,143,113,0.12);
+    color: var(--sage);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-top: 6px;
+  }
+
+  /* Meeting checklist */
+  .meeting-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--white);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 8px rgba(27,42,74,0.07);
+  }
+
+  .meeting-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+
+  .meeting-icon.done { background: rgba(107,143,113,0.15); }
+  .meeting-icon.pending { background: rgba(201,146,42,0.12); }
+  .meeting-icon.upcoming { background: var(--ivory-dark); }
+
+  .meeting-text { flex: 1; }
+  .meeting-text strong { font-size: 0.9rem; color: var(--navy); display: block; }
+  .meeting-text span { font-size: 0.8rem; color: var(--text-muted); }
+
+  .meeting-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .meeting-status.done { background: rgba(107,143,113,0.15); color: var(--sage); }
+  .meeting-status.pending { background: rgba(201,146,42,0.12); color: var(--gold); }
+  .meeting-status.upcoming { background: var(--ivory-dark); color: var(--text-muted); }
+
+  /* Section cards on dashboard */
+  .section-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .section-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 1px 10px rgba(27,42,74,0.08);
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: var(--shadow); }
+
+  .section-card.locked { opacity: 0.6; cursor: not-allowed; }
+  .section-card.locked:hover { transform: none; border-color: transparent; }
+
+  .section-card.completed { border-color: var(--sage); }
+
+  .section-card-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .section-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    color: var(--navy);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .section-card-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .section-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+  }
+
+  .section-pill {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .section-pill.done { background: rgba(107,143,113,0.15); color: var(--sage); }
+  .section-pill.inprogress { background: rgba(201,146,42,0.12); color: var(--gold); }
+  .section-pill.locked { background: var(--ivory-dark); color: var(--text-muted); }
+  .section-pill.available { background: rgba(27,42,74,0.08); color: var(--navy); }
+
+  .section-card-num {
+    font-size: 2.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--ivory-dark);
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-weight: 600;
+    line-height: 1;
+    user-select: none;
+  }
+
+  /* ── LESSON PAGE ── */
+  .lesson-header {
+    margin-bottom: 32px;
+  }
+
+  .lesson-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    margin-bottom: 20px;
+    padding: 6px 0;
+    background: none;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    transition: color 0.2s;
+  }
+
+  .lesson-back:hover { color: var(--navy); }
+
+  .lesson-progress-bar {
+    height: 4px;
+    background: var(--ivory-dark);
+    border-radius: 2px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+
+  .lesson-progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--gold), var(--gold-light));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  /* Lesson content blocks */
+  .content-block {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 36px 40px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 10px rgba(27,42,74,0.07);
+  }
+
+  .content-block h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    color: var(--navy);
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  .content-block h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--navy);
+    margin: 20px 0 10px;
+  }
+
+  .content-block p {
+    color: var(--text);
+    line-height: 1.8;
+    margin-bottom: 14px;
+    font-size: 0.95rem;
+  }
+
+  .content-block ul {
+    padding-left: 20px;
+    margin-bottom: 14px;
+  }
+
+  .content-block ul li {
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+  }
+
+  /* Scripture pull quote */
+  .scripture {
+    background: linear-gradient(135deg, rgba(27,42,74,0.04), rgba(201,146,42,0.06));
+    border-left: 3px solid var(--gold);
+    border-radius: 0 10px 10px 0;
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--navy);
+    line-height: 1.6;
+  }
+
+  .scripture cite {
+    display: block;
+    font-style: normal;
+    font-size: 0.8rem;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-muted);
+    margin-top: 8px;
+    font-weight: 500;
+  }
+
+  /* Key concept boxes */
+  .concept-box {
+    background: rgba(27,42,74,0.04);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+
+  .concept-box-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  /* Reflection / Journal block */
+  .reflection-block {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 36px 40px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 10px rgba(27,42,74,0.07);
+    border-top: 3px solid var(--terra);
+  }
+
+  .reflection-block .reflection-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 6px;
+  }
+
+  .reflection-block h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--navy);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .reflection-block p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.7;
+  }
+
+  .reflection-prompts {
+    margin-bottom: 20px;
+  }
+
+  .reflection-prompts li {
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-bottom: 8px;
+    padding-left: 4px;
+    line-height: 1.6;
+    list-style: none;
+    display: flex;
+    gap: 8px;
+  }
+
+  .reflection-prompts li::before {
+    content: '✦';
+    color: var(--terra);
+    font-size: 0.7rem;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  .journal-textarea {
+    width: 100%;
+    min-height: 180px;
+    padding: 16px 20px;
+    border: 1.5px solid var(--ivory-dark);
+    border-radius: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    color: var(--text);
+    background: var(--ivory);
+    resize: vertical;
+    outline: none;
+    line-height: 1.7;
+    transition: border-color 0.2s;
+  }
+
+  .journal-textarea:focus {
+    border-color: var(--terra);
+    background: var(--white);
+  }
+
+  .journal-textarea::placeholder { color: var(--text-muted); font-style: italic; }
+
+  .reflection-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Sponsor meeting gate */
+  .meeting-gate {
+    background: linear-gradient(135deg, #fff8ed, #fdf6ee);
+    border: 1.5px solid var(--gold-light);
+    border-radius: 14px;
+    padding: 32px 36px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .meeting-gate-icon { font-size: 2.5rem; margin-bottom: 14px; }
+
+  .meeting-gate h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+
+  .meeting-gate p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    max-width: 400px;
+    margin: 0 auto 20px;
+    line-height: 1.7;
+  }
+
+  .gate-confirm-btn {
+    padding: 12px 28px;
+    background: var(--gold);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .gate-confirm-btn:hover { background: var(--navy); }
+
+  /* Action buttons */
+  .lesson-actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 8px;
+  }
+
+  .btn-primary {
+    padding: 13px 28px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-primary:hover { background: var(--navy-light); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .btn-secondary {
+    padding: 13px 24px;
+    background: var(--white);
+    color: var(--navy);
+    border: 1.5px solid var(--ivory-dark);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover { border-color: var(--navy); background: var(--ivory); }
+
+  .btn-gold {
+    padding: 13px 28px;
+    background: var(--gold);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-gold:hover { background: #b8841e; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--navy);
+    color: var(--white);
+    padding: 14px 22px;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.35s ease;
+    z-index: 9999;
+    max-width: 300px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-left: 3px solid var(--sage); }
+  .toast.info { border-left: 3px solid var(--gold); }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .section-grid { grid-template-columns: 1fr; }
+    .main-content { padding: 28px 24px; }
+    .sidebar { width: 240px; }
+    .content-block, .reflection-block { padding: 24px 22px; }
+  }
+
+  @media (max-width: 680px) {
+    .sidebar { display: none; }
+    .main-content { padding: 20px 18px; }
+    .auth-card { padding: 36px 24px; margin: 16px; }
+    .top-header { padding: 0 18px; }
+  }
+
+  /* Sponsor page */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .info-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 1px 10px rgba(27,42,74,0.07);
+  }
+
+  .info-card-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .info-card-value {
+    font-size: 1rem;
+    color: var(--navy);
+    font-weight: 500;
+  }
+
+  @media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } }
+
+  /* Completion */
+  .completion-wrap {
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .completion-icon { font-size: 4rem; margin-bottom: 16px; }
+  .completion-wrap h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .completion-wrap p { color: var(--text-muted); margin-bottom: 28px; font-size: 1rem; }
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-symbol">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="22" stroke="#1B2A4A" stroke-width="2"/>
+        <path d="M24 8v32M8 24h32" stroke="#C9922A" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="24" cy="24" r="5" fill="#C9922A" fill-opacity="0.3"/>
+      </svg>
+    </div>
+    <h1 class="auth-title">The Journey</h1>
+    <p class="auth-subtitle">OCIA Online — Become Catholic at your own pace</p>
+    <label class="auth-label" for="username">Username</label>
+    <input class="auth-input" id="username" type="text" placeholder="Your username" autocomplete="username">
+    <label class="auth-label" for="password">Password</label>
+    <input class="auth-input" id="password" type="password" placeholder="Your password" autocomplete="current-password">
+    <p class="auth-error" id="auth-error">⚠ Incorrect username or password. Try again.</p>
+    <button class="auth-btn" onclick="login()">Sign In</button>
+    <div class="auth-demo">
+      <strong>Demo login:</strong> username <strong>journey</strong> · password <strong>faith2024</strong>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+
+  <!-- TOP HEADER -->
+  <header class="top-header">
+    <div class="header-brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+        <path d="M12 4v16M4 12h16" stroke="#C9922A" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      The Journey
+    </div>
+    <div class="header-right">
+      <div class="user-pill">
+        <div class="user-avatar" id="user-avatar-initials">JD</div>
+        <span id="user-display-name">Johanna D.</span>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+  </header>
+
+  <div class="app-body">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="sidebar-section-label">My Journey</div>
+      <button class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+        <span>🏠</span> Dashboard
+      </button>
+      <button class="nav-item" onclick="showPage('sponsor')" id="nav-sponsor">
+        <span>🕊️</span> My Sponsor
+      </button>
+
+      <div class="sidebar-section-label">Course Sections</div>
+      <button class="nav-item" onclick="goToSection(0)" id="nav-s0">
+        <span>✦</span> Inquiry & Welcome
+        <span class="nav-status available" id="status-s0">→</span>
+      </button>
+      <button class="nav-item" onclick="goToSection(1)" id="nav-s1">
+        <span>📖</span> Scripture & Tradition
+        <span class="nav-status locked" id="status-s1">🔒</span>
+      </button>
+      <button class="nav-item" onclick="goToSection(2)" id="nav-s2">
+        <span>✝</span> The Creed
+        <span class="nav-status locked" id="status-s2">🔒</span>
+      </button>
+      <button class="nav-item" onclick="goToSection(3)" id="nav-s3">
+        <span>🙏</span> Prayer & Liturgy
+        <span class="nav-status locked" id="status-s3">🔒</span>
+      </button>
+      <button class="nav-item" onclick="goToSection(4)" id="nav-s4">
+        <span>💧</span> Sacraments
+        <span class="nav-status locked" id="status-s4">🔒</span>
+      </button>
+      <button class="nav-item" onclick="goToSection(5)" id="nav-s5">
+        <span>🌿</span> Moral Life & Conscience
+        <span class="nav-status locked" id="status-s5">🔒</span>
+      </button>
+      <button class="nav-item" onclick="goToSection(6)" id="nav-s6">
+        <span>⛪</span> The Church
+        <span class="nav-status locked" id="status-s6">🔒</span>
+      </button>
+      <button class="nav-item" onclick="goToSection(7)" id="nav-s7">
+        <span>🕯️</span> Mystagogy
+        <span class="nav-status locked" id="status-s7">🔒</span>
+      </button>
+
+      <div class="journey-progress">
+        <div class="candle-container">
+          <div class="candle-wrap">
+            <div class="candle-flame"></div>
+            <div class="candle-body">
+              <div class="candle-fill" id="candle-fill" style="height:0%"></div>
+            </div>
+          </div>
+          <div class="progress-text">
+            <div class="progress-label" id="progress-label">Your Journey</div>
+            <div class="progress-sub" id="progress-sub">0 of 8 sections complete</div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- ── DASHBOARD PAGE ── -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-eyebrow">Welcome back</div>
+        <h1 class="page-title">Your Path Forward</h1>
+        <p class="page-intro">This course guides you through the same formation taught in OCIA — the Order of Christian Initiation of Adults — at a pace that works for you, wherever you are.</p>
+
+        <!-- SPONSOR CARD -->
+        <div class="sponsor-card">
+          <div class="sponsor-avatar">MF</div>
+          <div class="sponsor-details">
+            <h3>Michael Flanagan</h3>
+            <p>📞 (412) 555-0147 &nbsp;·&nbsp; ✉ m.flanagan@saintpats-pgh.org</p>
+            <p>Saint Patrick Parish, Pittsburgh, PA</p>
+            <div class="sponsor-badge">✦ Your Sponsor</div>
+          </div>
+        </div>
+
+        <!-- SPONSOR MEETINGS -->
+        <div class="page-eyebrow" style="margin-bottom:12px">Required Sponsor Meetings</div>
+        <div id="meeting-list">
+          <div class="meeting-row">
+            <div class="meeting-icon upcoming">📅</div>
+            <div class="meeting-text">
+              <strong>Meeting 1 — Introduction & Discernment</strong>
+              <span>Before starting the course · ~60 minutes with your sponsor</span>
+            </div>
+            <span class="meeting-status" id="mtg-status-0">Pending</span>
+          </div>
+          <div class="meeting-row">
+            <div class="meeting-icon upcoming">📅</div>
+            <div class="meeting-text">
+              <strong>Meeting 2 — Mid-Journey Check-In</strong>
+              <span>After completing Section 4 · ~45 minutes</span>
+            </div>
+            <span class="meeting-status" id="mtg-status-1">Upcoming</span>
+          </div>
+          <div class="meeting-row">
+            <div class="meeting-icon upcoming">📅</div>
+            <div class="meeting-text">
+              <strong>Meeting 3 — Final Reflection & Readiness</strong>
+              <span>After completing all sections · ~60 minutes</span>
+            </div>
+            <span class="meeting-status" id="mtg-status-2">Upcoming</span>
+          </div>
+        </div>
+
+        <div class="page-eyebrow" style="margin-top:36px; margin-bottom:14px">Course Sections</div>
+        <div class="section-grid" id="section-grid"></div>
+      </div>
+
+      <!-- ── SPONSOR PAGE ── -->
+      <div class="page" id="page-sponsor">
+        <button class="lesson-back" onclick="showPage('dashboard')">← Back to Dashboard</button>
+        <div class="page-eyebrow">Spiritual Guidance</div>
+        <h1 class="page-title">Your Parish Sponsor</h1>
+        <p class="page-intro">Your sponsor walks alongside you as a fellow Catholic who knows this journey. They are here to pray with you, answer questions, and share how faith has shaped their own life.</p>
+
+        <div class="sponsor-card">
+          <div class="sponsor-avatar">MF</div>
+          <div class="sponsor-details">
+            <h3>Michael Flanagan</h3>
+            <p>Parishioner & OCIA Sponsor</p>
+            <p>Saint Patrick Parish, Pittsburgh, PA</p>
+            <div class="sponsor-badge">✦ Assigned Sponsor</div>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-label">Phone</div>
+            <div class="info-card-value">(412) 555-0147</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">Email</div>
+            <div class="info-card-value">m.flanagan@saintpats-pgh.org</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">Parish</div>
+            <div class="info-card-value">Saint Patrick Parish</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">Pastor</div>
+            <div class="info-card-value">Fr. James O'Brien</div>
+          </div>
+        </div>
+
+        <div class="content-block">
+          <h2>About Your Required Meetings</h2>
+          <p>The Church asks that you meet with your sponsor in person (or by video call) three times as you move through this course. These meetings are not a test — they are a gift. Your sponsor will listen, reflect with you, and pass your written reflections to Fr. O'Brien before your Rite of Acceptance.</p>
+          <h3>What to bring to each meeting</h3>
+          <ul>
+            <li>Your written reflections from the sections you've completed</li>
+            <li>Any questions or doubts you've encountered — nothing is off-limits</li>
+            <li>An open heart and at least an hour of uninterrupted time</li>
+          </ul>
+          <div class="scripture">
+            "Walk with the wise and become wise, for a companion of fools suffers harm."
+            <cite>— Proverbs 13:20</cite>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── LESSON PAGES ── (rendered dynamically) -->
+      <div class="page" id="page-lesson">
+        <div id="lesson-content"></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────
+const USERS = {
+  'journey': { password: 'faith2024', name: 'Johanna Dempsey', initials: 'JD', display: 'Johanna D.' }
+};
+
+const SECTIONS = [
+  {
+    id: 0,
+    title: 'Inquiry & Welcome',
+    emoji: '✦',
+    desc: 'Explore your curiosity about the Catholic faith and what draws you to this journey.',
+    duration: '~30 min',
+    meetingBefore: true,
+    content: `
+      <h2>Welcome to the Journey</h2>
+      <p>The Catholic Church welcomes all who are curious. The Order of Christian Initiation of Adults (OCIA) is not about passing a test — it is about entering into a living relationship with God and with a community of faith that has walked this road for two thousand years.</p>
+      <p>In this first section, you will simply ask the most important question: <em>Why am I here?</em> There is no wrong answer. People come to this threshold from every imaginable place — grief, joy, a spouse's invitation, a long-buried longing, a single Mass that changed everything.</p>
+      <div class="concept-box">
+        <div class="concept-box-title">What is OCIA?</div>
+        <p style="margin:0;font-size:0.9rem;line-height:1.7">The Order of Christian Initiation of Adults is the Church's formal process for welcoming adults into full communion. It moves through four periods: <strong>Inquiry</strong>, <strong>Catechumenate</strong>, <strong>Purification & Enlightenment</strong>, and <strong>Mystagogy</strong>. This course walks you through all of them.</p>
+      </div>
+      <h3>The Church's Open Door</h3>
+      <p>The Catholic Church believes that every human being is created in the image and likeness of God — <em>imago Dei</em> — and carries within them a restlessness that only God can satisfy. Saint Augustine wrote in the 4th century: <em>"Our heart is restless, until it repose in Thee."</em> You are not beginning something new. You may be, at long last, coming home.</p>
+      <div class="scripture">
+        "Ask and it will be given to you; seek and you will find; knock and the door will be opened to you."
+        <cite>— Matthew 7:7</cite>
+      </div>
+      <h3>What Happens in OCIA?</h3>
+      <p>The journey of initiation includes three great sacraments sometimes called the <em>Sacraments of Initiation</em>: Baptism, Confirmation, and First Eucharist. If you are already baptized in another Christian tradition, you will receive Confirmation and First Eucharist. This course will prepare you for all of these, step by step, with your sponsor beside you.</p>
+    `,
+    reflection: {
+      prompt: "This first reflection is the foundation of your whole journey.",
+      questions: [
+        "What first drew you toward the Catholic faith? Was there a moment, a person, a feeling?",
+        "What do you hope to find or understand by the end of this course?",
+        "Is there anything that worries or confuses you about becoming Catholic? Write it down honestly."
+      ],
+      placeholder: "Begin writing here. There are no wrong words — only honest ones..."
+    }
+  },
+  {
+    id: 1,
+    title: 'Scripture & Tradition',
+    emoji: '📖',
+    desc: 'Discover the two pillars of Catholic faith: the written Word of God and the living Tradition of the Church.',
+    duration: '~45 min',
+    content: `
+      <h2>The Word of God — Scripture & Tradition</h2>
+      <p>Catholics believe that God has revealed himself to humanity in two inseparable ways: through <strong>Sacred Scripture</strong> (the Bible) and through <strong>Sacred Tradition</strong> (the living faith handed down from the Apostles through the Church). These are not rivals — they flow from the same divine source.</p>
+      <div class="concept-box">
+        <div class="concept-box-title">The Two Pillars</div>
+        <p style="margin:0;font-size:0.9rem;line-height:1.7"><strong>Sacred Scripture</strong> is the written Word of God — 73 books in the Catholic Bible, including 7 deuterocanonical books not found in Protestant Bibles. <strong>Sacred Tradition</strong> includes the creeds, councils, the writings of the Church Fathers, the liturgy, and the living practice of the faith passed from generation to generation.</p>
+      </div>
+      <h3>How Catholics Read the Bible</h3>
+      <p>Catholics read Scripture within the community of the Church. The Magisterium — the teaching authority of the Church — guides authentic interpretation. This does not mean individual reading is discouraged; rather, private reading is enriched by the community's two-thousand-year conversation with the text.</p>
+      <p>The Catholic Bible contains 73 books — 46 in the Old Testament and 27 in the New Testament. The seven books unique to Catholics (Tobit, Judith, 1 & 2 Maccabees, Wisdom, Sirach, and Baruch) are called the <em>deuterocanonical</em> books and were part of the Greek Septuagint used by the early Church.</p>
+      <div class="scripture">
+        "All scripture is given by inspiration of God, and is profitable for doctrine, for reproof, for correction, for instruction in righteousness."
+        <cite>— 2 Timothy 3:16</cite>
+      </div>
+      <h3>Tradition as Living Memory</h3>
+      <p>Tradition is not simply old customs. The Catechism of the Catholic Church teaches that Sacred Tradition "transmits in its entirety the Word of God which has been entrusted to the apostles by Christ the Lord and the Holy Spirit." When the Church gathers on Sunday and prays the same prayers as Christians in Rome in 150 AD, Tradition is alive in that room.</p>
+      <h3>The Magisterium</h3>
+      <p>The teaching office of the Church — the Pope together with the bishops in communion with him — is called the Magisterium. Catholics believe this office was entrusted to Peter and the Apostles by Christ himself, and continues in an unbroken line to this day. The Magisterium does not add to Revelation but faithfully interprets it.</p>
+    `,
+    reflection: {
+      prompt: "Take time to sit with what you've read before writing.",
+      questions: [
+        "Had you read the Bible before? What is your experience of it? What surprises you about how Catholics approach Scripture?",
+        "Does the idea of Tradition — a living, communal memory — feel comforting or limiting to you? Why?",
+        "Is there a passage of Scripture that has stayed with you? What is it, and why does it move you?"
+      ],
+      placeholder: "Write your reflection here. Your sponsor and pastor will read this together with you..."
+    }
+  },
+  {
+    id: 2,
+    title: 'The Creed',
+    emoji: '✝',
+    desc: 'Unpack the Apostles\' and Nicene Creeds — what Catholics believe about God, Jesus, and the Holy Spirit.',
+    duration: '~50 min',
+    content: `
+      <h2>I Believe — The Creed</h2>
+      <p>Every Sunday, Catholics around the world stand and pray the Nicene Creed together. It is not a legal contract or a loyalty oath — it is a love letter in the form of belief. To say "I believe" is to make a personal act of trust in a living God.</p>
+      <div class="scripture">
+        "I believe in one God, the Father almighty, maker of heaven and earth, of all things visible and invisible."
+        <cite>— The Nicene Creed, opening words</cite>
+      </div>
+      <h3>The Holy Trinity</h3>
+      <p>The central mystery of Christian faith is the Holy Trinity: one God in three Persons — Father, Son, and Holy Spirit. This is not a mathematical puzzle. The Trinity reveals that God is, at his very core, a communion of love. Christians do not simply believe that God loves; they believe that God <em>is</em> love.</p>
+      <div class="concept-box">
+        <div class="concept-box-title">The Three Persons</div>
+        <p style="margin:0;font-size:0.9rem;line-height:1.7"><strong>God the Father</strong> — Creator of all things, source of all being.<br><strong>God the Son</strong> — Jesus Christ, who became human, died, and rose again for our salvation.<br><strong>God the Holy Spirit</strong> — the Advocate, who dwells within the Church and within each baptized person.</p>
+      </div>
+      <h3>Jesus Christ — True God and True Man</h3>
+      <p>Catholics believe that Jesus of Nazareth is fully divine and fully human — not half of each, but completely both. This mystery is called the Incarnation. The Council of Chalcedon (451 AD) defined this carefully: two natures, one Person. Jesus is the eternal Son of God who took on flesh, lived among us, suffered, died, and rose bodily from the dead on the third day.</p>
+      <p>The Resurrection is not a metaphor for Catholics. It is a historical event that changed the direction of history. St. Paul writes bluntly: "if Christ has not been raised, your faith is futile" (1 Cor 15:17). The Resurrection is the ground beneath everything else.</p>
+      <h3>The Church, Forgiveness, and Eternal Life</h3>
+      <p>The Creed ends by professing belief in "the holy catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and life everlasting." Catholics believe in the resurrection of the body — not just the soul — at the end of time. The body we have in this life matters; it will one day be raised and glorified.</p>
+    `,
+    reflection: {
+      prompt: "The Creed is a profession of personal faith. Reflect honestly.",
+      questions: [
+        "Which part of the Creed resonates most deeply with you right now? Which part is hardest to believe?",
+        "What do you believe about Jesus? Has your understanding changed or deepened as you read this section?",
+        "What does it mean to you personally that God is a Trinity — a communion of three Persons in love?"
+      ],
+      placeholder: "Write your reflection here..."
+    }
+  },
+  {
+    id: 3,
+    title: 'Prayer & Liturgy',
+    emoji: '🙏',
+    desc: 'Enter the rhythm of Catholic prayer and discover how the Mass is the center of Catholic life.',
+    duration: '~45 min',
+    meetingAfter: true,
+    content: `
+      <h2>Speaking with God — Prayer & the Liturgy</h2>
+      <p>Prayer is the raising of one's mind and heart to God. It is not a technique or a performance. For Catholics, prayer takes many forms — from silent contemplation in an empty church to the communal thunder of the Mass. All of it is conversation with a personal God who hears.</p>
+      <h3>Forms of Prayer</h3>
+      <p>The Catechism identifies five forms of prayer: blessing and adoration, petition, intercession, thanksgiving, and praise. Catholics pray alone and together, spontaneously and formulaically. Both modes matter. Memorized prayers — the Our Father, the Hail Mary, the Rosary — give words to the heart when words fail on their own.</p>
+      <div class="concept-box">
+        <div class="concept-box-title">The Our Father</div>
+        <p style="margin:0;font-size:0.9rem;line-height:1.7">Jesus himself taught his disciples to pray in these words (Matthew 6:9–13). The Church calls the Our Father the "summary of the whole Gospel." Every petition it contains is worth a lifetime of reflection. You will hear it at every Mass.</p>
+      </div>
+      <div class="scripture">
+        "Our Father, who art in heaven, hallowed be thy name; thy kingdom come, thy will be done on earth as it is in heaven."
+        <cite>— Matthew 6:9–10</cite>
+      </div>
+      <h3>The Holy Mass</h3>
+      <p>The Mass is the center of Catholic life. It is not a memorial service or a symbolic remembrance — Catholics believe the Mass makes present the one sacrifice of Christ on Calvary. When the bread and wine are consecrated, Catholics believe they become, in a true and real way, the Body and Blood of Christ. This is called the <em>Real Presence</em>.</p>
+      <p>The Mass has two great parts: the <strong>Liturgy of the Word</strong>, in which Scripture is read and preached, and the <strong>Liturgy of the Eucharist</strong>, in which bread and wine are offered, consecrated, and received. The two parts belong together: God speaks, and then God feeds.</p>
+      <h3>The Liturgical Year</h3>
+      <p>Catholics live inside a liturgical year — a calendar that moves through <em>Advent, Christmas, Ordinary Time, Lent, the Easter Triduum, Easter, and Ordinary Time</em> again. The year is not a cycle of repetition but of deepening. Each Advent is a new waiting; each Easter a new resurrection.</p>
+    `,
+    reflection: {
+      prompt: "Prayer can feel easy or impossible. Write honestly about your experience.",
+      questions: [
+        "Have you attended a Catholic Mass before? What was your experience — confusion, wonder, indifference, something else?",
+        "How do you currently pray, if at all? Is it easy or difficult? Do you feel heard?",
+        "What surprises you about the Catholic understanding of the Mass as more than a symbol?"
+      ],
+      placeholder: "Write your reflection here..."
+    }
+  },
+  {
+    id: 4,
+    title: 'The Sacraments',
+    emoji: '💧',
+    desc: 'Encounter the seven sacraments — the Church\'s sacred signs through which God acts in human life.',
+    duration: '~55 min',
+    content: `
+      <h2>Visible Signs of Invisible Grace — The Sacraments</h2>
+      <p>A sacrament is an outward sign instituted by Christ to give grace. There are seven: <strong>Baptism, Confirmation, Eucharist, Penance (Reconciliation), Anointing of the Sick, Holy Orders, and Matrimony</strong>. The sacraments are not magic — they are encounters with Christ who acts through them.</p>
+      <div class="concept-box">
+        <div class="concept-box-title">The Seven Sacraments at a Glance</div>
+        <p style="margin:0;font-size:0.9rem;line-height:1.7">
+          <strong>Initiation:</strong> Baptism · Confirmation · Eucharist<br>
+          <strong>Healing:</strong> Reconciliation · Anointing of the Sick<br>
+          <strong>Service:</strong> Holy Orders · Matrimony
+        </p>
+      </div>
+      <h3>Baptism — The Gateway</h3>
+      <p>Baptism is the first and foundational sacrament. Through water and the invocation of the Trinity, original sin is washed away, a person is born again as a child of God, and becomes a member of the Body of Christ — the Church. Baptism leaves an indelible mark on the soul that cannot be removed or repeated.</p>
+      <h3>Confirmation — Sealed with the Spirit</h3>
+      <p>In Confirmation, the baptized receive the fullness of the Holy Spirit in a new way — strengthened, deepened, and sent. The bishop (or his delegate) anoints the forehead with sacred Chrism oil and calls the person by name. You are sealed as a soldier of Christ, confirmed in the faith.</p>
+      <h3>The Eucharist — Source and Summit</h3>
+      <p>The Second Vatican Council called the Eucharist "the source and summit of the Christian life." Catholics believe that at the words of consecration, the bread and wine truly become the Body and Blood of Christ — not symbolically, but substantially. This is the doctrine of <em>transubstantiation</em>.</p>
+      <div class="scripture">
+        "I am the living bread that came down from heaven. Whoever eats this bread will live forever."
+        <cite>— John 6:51</cite>
+      </div>
+      <h3>Reconciliation — Coming Home Again</h3>
+      <p>The sacrament of Reconciliation (also called Confession or Penance) is where the baptized return after sin. Catholics confess to a priest, who acts in the person of Christ, and receive absolution — the formal forgiveness of sin by God. Many converts find this sacrament to be unexpectedly transforming.</p>
+    `,
+    reflection: {
+      prompt: "The sacraments touch the most intimate moments of human life. Reflect on that.",
+      questions: [
+        "Which sacrament do you find most beautiful or moving? Which is hardest to understand or accept?",
+        "What is your experience of forgiveness — seeking it, receiving it, or giving it? How does the Sacrament of Reconciliation speak to that?",
+        "As someone preparing for the Sacraments of Initiation, what do you feel as you approach Baptism (or Confirmation and Eucharist)?"
+      ],
+      placeholder: "Write your reflection here..."
+    }
+  },
+  {
+    id: 5,
+    title: 'Moral Life & Conscience',
+    emoji: '🌿',
+    desc: 'Explore how Catholics understand morality, conscience, the Ten Commandments, and the Beatitudes.',
+    duration: '~45 min',
+    content: `
+      <h2>Living Well — The Moral Life</h2>
+      <p>Catholic moral teaching is not a list of prohibitions. It is a vision of human flourishing — of what it means to live as the person you were created to be. The Church's moral teaching flows from three sources: the natural law written in the human heart, divine Revelation in Scripture and Tradition, and the authoritative teaching of the Magisterium.</p>
+      <h3>Conscience — The Interior Voice</h3>
+      <p>The Catechism calls conscience "the most secret core and sanctuary" of the person. Catholics have a sacred duty to follow their conscience — but also a duty to <em>form</em> their conscience in light of truth. A well-formed conscience is not a rubber-stamp for whatever we want; it is a finely tuned instrument of moral discernment.</p>
+      <div class="concept-box">
+        <div class="concept-box-title">Forming Your Conscience</div>
+        <p style="margin:0;font-size:0.9rem;line-height:1.7">Catholics form conscience through: prayer, study of Scripture and Church teaching, the Sacraments, and wise counsel from confessor, priest, or spiritual director. An <em>informed</em> conscience, not a merely <em>convenient</em> one, is what the Church calls us to follow.</p>
+      </div>
+      <h3>The Ten Commandments</h3>
+      <p>The Ten Commandments given to Moses (Exodus 20) are not abolished in Christianity — they are fulfilled and deepened. Jesus summarized them in two: love God with your whole self, and love your neighbor as yourself. The Commandments protect the fundamental goods of human life: life, family, truth, property, and right relationship with God.</p>
+      <h3>The Beatitudes</h3>
+      <p>In the Sermon on the Mount (Matthew 5), Jesus proclaimed a radical inversion of worldly values. Blessed are the poor in spirit, the mourning, the meek, the merciful, the peacemakers. The Beatitudes are not just ethical ideals — they describe the shape of a life transformed by the Holy Spirit.</p>
+      <div class="scripture">
+        "Blessed are the pure in heart, for they will see God."
+        <cite>— Matthew 5:8</cite>
+      </div>
+      <h3>Social Teaching</h3>
+      <p>Catholic social teaching — sometimes called "the Church's best-kept secret" — applies moral principles to society. Themes include the dignity of every human person, the preferential option for the poor, subsidiarity, solidarity, and care for creation. It resists reduction to any single political party or ideology.</p>
+    `,
+    reflection: {
+      prompt: "Morality is personal. Write from your own experience and convictions.",
+      questions: [
+        "Where in your life do you feel the pull between what you know is right and what you want to do? How do you navigate that?",
+        "Which of the Beatitudes do you find most challenging? Which one feels like a description of someone you admire?",
+        "How does the Catholic understanding of conscience — both free and obligated to truth — sit with you?"
+      ],
+      placeholder: "Write your reflection here..."
+    }
+  },
+  {
+    id: 6,
+    title: 'The Church',
+    emoji: '⛪',
+    desc: 'Understand what Catholics mean by "Church" — one, holy, catholic, and apostolic.',
+    duration: '~40 min',
+    content: `
+      <h2>One, Holy, Catholic, and Apostolic</h2>
+      <p>The Nicene Creed describes four marks of the Church. These are not marketing slogans — they are theological convictions about the nature of the Body of Christ in the world. Catholics believe the Church Christ founded continues in the Catholic Church in a special way, while recognizing elements of truth and sanctification in other Christian communities.</p>
+      <div class="concept-box">
+        <div class="concept-box-title">The Four Marks of the Church</div>
+        <p style="margin:0;font-size:0.9rem;line-height:1.7"><strong>One</strong> — united in one faith, one baptism, one Lord.<br><strong>Holy</strong> — made holy by Christ, though its members are sinners.<br><strong>Catholic</strong> — universal, for all peoples and all times.<br><strong>Apostolic</strong> — founded on the Apostles, in unbroken succession to today.</p>
+      </div>
+      <h3>Apostolic Succession</h3>
+      <p>Catholics believe that the bishops of the Church stand in an unbroken line of ordination stretching back to the Apostles themselves. This is called apostolic succession. The Bishop of Rome — the Pope — holds a special role as the successor of Peter, to whom Christ gave "the keys of the kingdom."</p>
+      <h3>The Communion of Saints</h3>
+      <p>The Church is not only the people in the pews. It includes those who have gone before us in faith — the saints in heaven, those being purified in Purgatory, and those of us still on earth. Catholics believe in a living communion across death, in which we pray for one another and are connected in the Body of Christ.</p>
+      <div class="scripture">
+        "You are Peter, and on this rock I will build my Church, and the gates of the netherworld shall not prevail against it."
+        <cite>— Matthew 16:18</cite>
+      </div>
+      <h3>Mary, Mother of the Church</h3>
+      <p>Catholics honor Mary as the Mother of God (<em>Theotokos</em>) — the human being who carried God incarnate in her womb. Marian devotion is not worship; it is veneration. Mary is the first and greatest disciple, the model of perfect faith. Catholic Marian doctrines — the Immaculate Conception, the Assumption — flow from who she is in relation to her Son.</p>
+    `,
+    reflection: {
+      prompt: "The Church is beautiful and broken at the same time. Be honest.",
+      questions: [
+        "The Church is made of sinful people but claims to be holy. How do you hold those two truths together?",
+        "What has your experience of parish or faith community been like — in any tradition? What do you hope for from a church community?",
+        "Does the figure of Mary speak to you or feel foreign? Write about your honest reaction to her role in Catholic faith."
+      ],
+      placeholder: "Write your reflection here..."
+    }
+  },
+  {
+    id: 7,
+    title: 'Mystagogy — Living the Mystery',
+    emoji: '🕯️',
+    desc: 'The final period: entering fully into the mysteries you have received and living them from the inside.',
+    duration: '~35 min',
+    meetingAfter: true,
+    content: `
+      <h2>Mystagogy — Entering the Mystery</h2>
+      <p><em>Mystagogy</em> comes from the Greek: <em>mystes</em> (one initiated into mysteries) and <em>agogos</em> (leading). It is the Church's word for what happens <em>after</em> the Sacraments of Initiation — the period of deepening, of discovering from the inside what was previously only known from the outside.</p>
+      <p>Initiation is not the end of the journey. It is the beginning of a different kind of journey. The newly baptized — called <em>neophytes</em> — are invited to sit with the experience of the Easter sacraments and let their meaning open up slowly, the way sunlight enters a room not all at once but gradually, through the turning of the earth.</p>
+      <div class="scripture">
+        "I have much more to say to you, more than you can now bear. But when he, the Spirit of truth, comes, he will guide you into all the truth."
+        <cite>— John 16:12–13</cite>
+      </div>
+      <h3>What You Have Received</h3>
+      <p>If you have been baptized, you carry within you the life of God — sanctifying grace. If you have been confirmed, you are sealed with the Spirit for mission. If you have received First Eucharist, you have eaten the Bread of Life. These are not achievements. They are gifts that will take a lifetime to unwrap.</p>
+      <h3>How to Continue</h3>
+      <p>The Church offers a rich treasury for the newly initiated: regular reception of the Eucharist and Reconciliation, lectio divina (prayerful reading of Scripture), participation in parish life, spiritual direction, and continued formation. Your sponsor remains a resource. Your pastor is available. The saints who have gone before you are praying for you by name.</p>
+      <div class="concept-box">
+        <div class="concept-box-title">Practices for the Newly Initiated</div>
+        <p style="margin:0;font-size:0.9rem;line-height:1.7">
+          • Weekly Sunday Mass — without exception when possible<br>
+          • Monthly Reconciliation — a gift, not a punishment<br>
+          • Daily prayer — even five minutes<br>
+          • Scripture reading — one passage a day<br>
+          • Service — find one way to serve your parish or community
+        </p>
+      </div>
+      <h3>A Final Word</h3>
+      <p>The Catholic faith is not a destination. It is a way of traveling. You will have doubts, struggles, dry spells, and moments of unexpected grace. That is normal. That is human. The Church is not a museum of perfect people — it is a hospital for sinners who have recognized their need for God. You are welcome here. You always have been.</p>
+    `,
+    reflection: {
+      prompt: "This is your final reflection. Write with the fullness of where you are now.",
+      questions: [
+        "Looking back at your first reflection — how have you changed? What surprised you most about this journey?",
+        "What aspect of Catholic faith do you most want to explore further after completing this course?",
+        "Write a prayer in your own words — to God, or to Jesus, or to the Holy Spirit — expressing what is in your heart right now."
+      ],
+      placeholder: "Write your final reflection here. This is yours — and it will be shared with your sponsor and pastor as you prepare to conclude your journey..."
+    }
+  }
+];
+
+// ─── STATE ────────────────────────────────────────────────────
+let state = {
+  loggedIn: false,
+  user: null,
+  completedSections: [],
+  reflections: {},
+  meetings: [false, false, false],
+  currentSection: null
+};
+
+// ─── AUTH ─────────────────────────────────────────────────────
+function login() {
+  const u = document.getElementById('username').value.trim().toLowerCase();
+  const p = document.getElementById('password').value;
+  const errEl = document.getElementById('auth-error');
+
+  if (USERS[u] && USERS[u].password === p) {
+    state.user = USERS[u];
+    state.loggedIn = true;
+    errEl.style.display = 'none';
+
+    // Load saved state
+    const saved = localStorage.getItem('ocia_state_' + u);
+    if (saved) {
+      const s = JSON.parse(saved);
+      state.completedSections = s.completedSections || [];
+      state.reflections = s.reflections || {};
+      state.meetings = s.meetings || [false, false, false];
+    }
+
+    document.getElementById('user-avatar-initials').textContent = state.user.initials;
+    document.getElementById('user-display-name').textContent = state.user.display;
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+
+    renderDashboard();
+    updateProgress();
+  } else {
+    errEl.style.display = 'block';
+    document.getElementById('password').value = '';
+  }
+}
+
+document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+document.getElementById('username').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+
+function logout() {
+  saveState();
+  state = { loggedIn: false, user: null, completedSections: [], reflections: {}, meetings: [false, false, false], currentSection: null };
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+}
+
+function saveState() {
+  if (!state.user) return;
+  const key = 'ocia_state_' + Object.keys(USERS).find(k => USERS[k] === state.user);
+  localStorage.setItem(key, JSON.stringify({
+    completedSections: state.completedSections,
+    reflections: state.reflections,
+    meetings: state.meetings
+  }));
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + name);
+  if (navEl) navEl.classList.add('active');
+}
+
+function goToSection(idx) {
+  const section = SECTIONS[idx];
+  const isAvailable = idx === 0 || state.completedSections.includes(idx - 1);
+  if (!isAvailable) {
+    showToast('Complete the previous section first.', 'info');
+    return;
+  }
+
+  state.currentSection = idx;
+
+  // Meeting gate for meeting 1 (before section 0 if not met yet)
+  if (idx === 0 && !state.meetings[0]) {
+    renderMeetingGate(0, () => goToSection(0));
+    return;
+  }
+
+  // Meeting gate for meeting 2 (after section 3, before section 4)
+  if (idx === 4 && !state.meetings[1]) {
+    renderMeetingGate(1, () => goToSection(4));
+    return;
+  }
+
+  renderLesson(section);
+  showPage('lesson');
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navEl = document.getElementById('nav-s' + idx);
+  if (navEl) navEl.classList.add('active');
+}
+
+// ─── RENDER LESSON ────────────────────────────────────────────
+function renderLesson(section) {
+  const completed = state.completedSections.includes(section.id);
+  const savedReflection = state.reflections[section.id] || '';
+  const totalSections = SECTIONS.length;
+  const doneCount = state.completedSections.length;
+  const progressPct = Math.round(((section.id) / totalSections) * 100);
+
+  document.getElementById('lesson-content').innerHTML = `
+    <button class="lesson-back" onclick="showPage('dashboard'); renderDashboard();">← Back to Dashboard</button>
+
+    <div class="lesson-progress-bar">
+      <div class="lesson-progress-fill" style="width:${progressPct}%"></div>
+    </div>
+
+    <div class="lesson-header">
+      <div class="page-eyebrow">Section ${section.id + 1} of ${totalSections} · ${section.duration}</div>
+      <h1 class="page-title">${section.emoji} ${section.title}</h1>
+    </div>
+
+    <div class="content-block">
+      ${section.content}
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-label">✦ Personal Reflection</div>
+      <h3>Journaling Your Journey</h3>
+      <p>${section.reflection.prompt} Your sponsor and pastor will read this with you. What you write here is part of your formation — be honest, be real, be yourself.</p>
+      <ul class="reflection-prompts">
+        ${section.reflection.questions.map(q => `<li>${q}</li>`).join('')}
+      </ul>
+      <textarea class="journal-textarea" id="journal-${section.id}" placeholder="${section.reflection.placeholder}">${savedReflection}</textarea>
+      <p class="reflection-note">
+        <span>📝</span> Your reflection is saved automatically. Your pastor receives a copy to discuss at your next meeting.
+      </p>
+    </div>
+
+    <div class="lesson-actions">
+      ${completed
+        ? `<button class="btn-gold" disabled>✓ Section Complete</button>`
+        : `<button class="btn-primary" onclick="completeSection(${section.id})" id="complete-btn-${section.id}">
+            Mark Complete & Continue →
+          </button>`
+      }
+      <button class="btn-secondary" onclick="saveReflection(${section.id}); showToast('Progress saved.', 'success')">Save Progress</button>
+    </div>
+  `;
+
+  // Auto-save on typing
+  const ta = document.getElementById('journal-' + section.id);
+  if (ta) {
+    ta.addEventListener('input', () => {
+      state.reflections[section.id] = ta.value;
+      saveState();
+    });
+  }
+}
+
+function renderMeetingGate(meetingIdx, onConfirm) {
+  const titles = [
+    'Meeting 1 — Introduction & Discernment',
+    'Meeting 2 — Mid-Journey Check-In',
+    'Meeting 3 — Final Reflection & Readiness'
+  ];
+  const descs = [
+    'Before beginning the course, please meet with your sponsor, Michael Flanagan. This first conversation helps your sponsor understand your background and intentions. Once you\'ve had your meeting, confirm it here to unlock the course.',
+    'You\'ve completed the first four sections — wonderful! Before continuing, please meet with Michael to share your reflections so far. This mid-point conversation is an important part of your formation.',
+    'You\'ve nearly finished the course. Meet with Michael one final time to review your journey. Your written reflections will be shared with Fr. O\'Brien as you prepare for the Rite of Acceptance.'
+  ];
+
+  document.getElementById('lesson-content').innerHTML = `
+    <button class="lesson-back" onclick="showPage('dashboard')">← Back to Dashboard</button>
+    <div class="meeting-gate" style="margin-top:40px">
+      <div class="meeting-gate-icon">🕊️</div>
+      <h3>${titles[meetingIdx]}</h3>
+      <p>${descs[meetingIdx]}</p>
+      <p style="font-size:0.85rem;color:#888;margin-bottom:20px">
+        Contact Michael Flanagan:<br>
+        <strong style="color:#1B2A4A">(412) 555-0147 · m.flanagan@saintpats-pgh.org</strong>
+      </p>
+      <button class="gate-confirm-btn" onclick="confirmMeeting(${meetingIdx}, ${meetingIdx === 0 ? 0 : 4})">
+        ✓ I have met with my sponsor — Continue
+      </button>
+    </div>
+  `;
+  showPage('lesson');
+}
+
+function confirmMeeting(meetingIdx, sectionIdx) {
+  state.meetings[meetingIdx] = true;
+  saveState();
+  updateMeetingStatuses();
+  showToast('Meeting confirmed! Moving forward...', 'success');
+  setTimeout(() => goToSection(sectionIdx), 600);
+}
+
+function saveReflection(sectionId) {
+  const ta = document.getElementById('journal-' + sectionId);
+  if (ta) state.reflections[sectionId] = ta.value;
+  saveState();
+}
+
+function completeSection(sectionId) {
+  saveReflection(sectionId);
+  const ta = document.getElementById('journal-' + sectionId);
+  const text = ta ? ta.value.trim() : '';
+
+  if (text.length < 30) {
+    showToast('Please write a reflection (at least a few sentences) before continuing.', 'info');
+    ta.focus();
+    return;
+  }
+
+  if (!state.completedSections.includes(sectionId)) {
+    state.completedSections.push(sectionId);
+  }
+  saveState();
+  updateProgress();
+
+  // Meeting 3 gate — after last section
+  if (sectionId === 7 && !state.meetings[2]) {
+    showToast('Section complete! Please complete your final meeting.', 'success');
+    setTimeout(() => { renderFinalMeeting(); showPage('lesson'); }, 600);
+    return;
+  }
+
+  showToast('Section complete! Well done.', 'success');
+  setTimeout(() => {
+    showPage('dashboard');
+    renderDashboard();
+  }, 800);
+}
+
+function renderFinalMeeting() {
+  document.getElementById('lesson-content').innerHTML = `
+    <button class="lesson-back" onclick="showPage('dashboard')">← Back to Dashboard</button>
+    <div class="meeting-gate" style="margin-top:40px">
+      <div class="meeting-gate-icon">🕯️</div>
+      <h3>Meeting 3 — Final Reflection & Readiness</h3>
+      <p>You have completed all eight sections of the course. Before your journey is formally recognized, please meet with your sponsor Michael one final time. Fr. O'Brien will receive your written reflections and discuss next steps with you both.</p>
+      <p style="font-size:0.85rem;color:#888;margin-bottom:20px">
+        <strong style="color:#1B2A4A">(412) 555-0147 · m.flanagan@saintpats-pgh.org</strong>
+      </p>
+      <button class="gate-confirm-btn" onclick="confirmFinalMeeting()">
+        ✓ I have met with my sponsor — Complete My Journey
+      </button>
+    </div>
+  `;
+}
+
+function confirmFinalMeeting() {
+  state.meetings[2] = true;
+  saveState();
+  updateMeetingStatuses();
+  document.getElementById('lesson-content').innerHTML = `
+    <div class="completion-wrap">
+      <div class="completion-icon">🕯️</div>
+      <h2>Your Journey Is Complete</h2>
+      <p>You have completed all eight sections of OCIA Online and all three required meetings with your sponsor. Fr. O'Brien has your reflections and will be in touch about the next steps toward your Rite of Acceptance.</p>
+      <p style="font-size:0.9rem;color:#888;margin-bottom:32px">May the grace of this journey continue to deepen in you.</p>
+      <button class="btn-primary" onclick="showPage('dashboard'); renderDashboard()">Return to Dashboard</button>
+    </div>
+  `;
+}
+
+// ─── RENDER DASHBOARD ─────────────────────────────────────────
+function renderDashboard() {
+  const grid = document.getElementById('section-grid');
+  grid.innerHTML = SECTIONS.map(s => {
+    const done = state.completedSections.includes(s.id);
+    const available = s.id === 0 || state.completedSections.includes(s.id - 1);
+    const inProgress = !done && available;
+    let statusClass = done ? 'done' : (inProgress ? 'available' : 'locked');
+    let statusText = done ? '✓ Complete' : (inProgress ? 'Continue →' : '🔒 Locked');
+    let cardClass = done ? 'completed' : (!available ? 'locked' : '');
+
+    return `
+      <div class="section-card ${cardClass}" onclick="${available ? `goToSection(${s.id})` : "showToast('Complete the previous section to unlock this one.', 'info')"}">
+        <div class="section-card-num">${String(s.id + 1).padStart(2, '0')}</div>
+        <div class="section-card-eyebrow">Section ${s.id + 1}</div>
+        <div class="section-card-title">${s.emoji} ${s.title}</div>
+        <div class="section-card-desc">${s.desc}</div>
+        <div class="section-card-footer">
+          <span class="section-pill ${statusClass}">${statusText}</span>
+          <span style="color:var(--text-muted);font-size:0.72rem">${s.duration}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  updateMeetingStatuses();
+}
+
+function updateMeetingStatuses() {
+  const mtgData = [
+    { done: state.meetings[0], pending: true, label: 'Before starting the course · ~60 min' },
+    { done: state.meetings[1], pending: state.completedSections.length >= 4, label: 'After Section 4 · ~45 min' },
+    { done: state.meetings[2], pending: state.completedSections.length >= 8, label: 'After all sections · ~60 min' }
+  ];
+  mtgData.forEach((m, i) => {
+    const el = document.getElementById('mtg-status-' + i);
+    if (!el) return;
+    if (m.done) {
+      el.textContent = '✓ Complete';
+      el.className = 'meeting-status done';
+    } else if (m.pending) {
+      el.textContent = 'Schedule Now';
+      el.className = 'meeting-status pending';
+    } else {
+      el.textContent = 'Upcoming';
+      el.className = 'meeting-status upcoming';
+    }
+  });
+}
+
+function updateProgress() {
+  const done = state.completedSections.length;
+  const total = SECTIONS.length;
+  const pct = Math.round((done / total) * 100);
+
+  document.getElementById('candle-fill').style.height = pct + '%';
+  document.getElementById('progress-label').textContent = pct === 100 ? 'Journey Complete!' : 'Your Journey';
+  document.getElementById('progress-sub').textContent = `${done} of ${total} sections complete`;
+
+  // Update nav statuses
+  SECTIONS.forEach((s, idx) => {
+    const statusEl = document.getElementById('status-s' + idx);
+    if (!statusEl) return;
+    if (state.completedSections.includes(idx)) {
+      statusEl.textContent = '✓';
+      statusEl.className = 'nav-status done';
+    } else if (idx === 0 || state.completedSections.includes(idx - 1)) {
+      statusEl.textContent = '→';
+      statusEl.className = 'nav-status available';
+    } else {
+      statusEl.textContent = '🔒';
+      statusEl.className = 'nav-status locked';
+    }
+  });
+}
+
+// ─── TOAST ────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('toast');
+  const icon = type === 'success' ? '✓' : 'ℹ';
+  t.innerHTML = `<span>${icon}</span> ${msg}`;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = 'toast'; }, 3200);
+}
+</script>
+</body>
+</html>
