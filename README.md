@@ -1,22 +1,16 @@
-# The Journey — OCIA Online
+# Rosary Mindset
 
-An online course that teaches the full OCIA (Order of Christian Initiation of Adults) curriculum, allowing people to learn the Catholic faith at their own pace while maintaining a parish sponsor relationship.
+An online OCIA course that allows people to learn the Catholic faith at their own pace, with a required parish sponsor relationship woven into the experience.
 
 ## Features
 
 - **Full OCIA curriculum** — 8 sections covering Inquiry, Scripture & Tradition, The Creed, Prayer & Liturgy, The Sacraments, Moral Life, The Church, and Mystagogy
-- **Login system** — secure user authentication with progress saved to localStorage
+- **Login system** — user authentication with progress saved to localStorage
 - **Parish sponsor** — sponsor info displayed throughout; required meetings gate course progression
 - **3 required sponsor meetings** — locked checkpoints ensure pastoral accompaniment
-- **Personal reflection journal** — each section has written reflection prompts before you can advance
+- **Personal reflection journal** — each section has written reflection prompts before advancing
 - **Progress tracking** — animated candle that fills as sections are completed
 - **Fully responsive** — works on desktop and mobile
-
-## Login Credentials
-
-| Username | Password |
-|----------|----------|
-| `journey` | `faith2024` |
 
 ## Deployment to Vercel
 
@@ -25,36 +19,37 @@ An online course that teaches the full OCIA (Order of Christian Initiation of Ad
 1. Push this folder to a GitHub repository
 2. Go to [vercel.com](https://vercel.com) and click **Add New Project**
 3. Import your GitHub repo
-4. Vercel will detect the static site automatically
-5. Click **Deploy** — done!
+4. Vercel will detect the static site automatically — no build step needed
+5. Click **Deploy**
 
 ### Option 2 — Vercel CLI
 
 ```bash
 npm i -g vercel
-cd ocia-course
+cd rosary-mindset
 vercel
 ```
 
-## Adding More Users
+## Managing Users
 
-In `index.html`, find the `USERS` object near the top of the `<script>` tag and add entries:
+In `index.html`, find the `USERS` object near the top of the `<script>` tag:
 
 ```javascript
 const USERS = {
-  'journey': { password: 'faith2024', name: 'Johanna Dempsey', initials: 'JD', display: 'Johanna D.' },
-  'newuser': { password: 'theirpassword', name: 'First Last', initials: 'FL', display: 'First L.' }
+  'username': { password: 'password', name: 'Full Name', initials: 'FN', display: 'First N.' }
 };
 ```
 
+Add or update entries to create accounts for each learner.
+
 ## Customizing the Sponsor
 
-Search for `Michael Flanagan` in `index.html` to update sponsor name, phone, email, and parish.
+Search for `Michael Flanagan` in `index.html` to update the sponsor name, phone, email, and parish.
 
-## Structure
+## File Structure
 
 ```
-ocia-course/
+rosary-mindset/
   index.html    ← entire app (HTML + CSS + JS, single file)
   vercel.json   ← Vercel routing config
   README.md     ← this file
