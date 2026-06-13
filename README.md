@@ -1,56 +1,44 @@
 # Rosary Mindset
 
-An online OCIA course that allows people to learn the Catholic faith at their own pace, with a required parish sponsor relationship woven into the experience.
+An online OCIA course with admin account management.
 
-## Features
+## Logging In
 
-- **Full OCIA curriculum** — 8 sections covering Inquiry, Scripture & Tradition, The Creed, Prayer & Liturgy, The Sacraments, Moral Life, The Church, and Mystagogy
-- **Login system** — user authentication with progress saved to localStorage
-- **Parish sponsor** — sponsor info displayed throughout; required meetings gate course progression
-- **3 required sponsor meetings** — locked checkpoints ensure pastoral accompaniment
-- **Personal reflection journal** — each section has written reflection prompts before advancing
-- **Progress tracking** — animated candle that fills as sections are completed
-- **Fully responsive** — works on desktop and mobile
+### Learner login
+Users go to the main URL and sign in with their username and password.
 
-## Deployment to Vercel
+### Admin login
+Click the small **"Admin access →"** link at the bottom of the login card.
+Enter the admin password (default: `rosaryadmin2024`).
 
-### Option 1 — From GitHub (recommended)
-
-1. Push this folder to a GitHub repository
-2. Go to [vercel.com](https://vercel.com) and click **Add New Project**
-3. Import your GitHub repo
-4. Vercel will detect the static site automatically — no build step needed
-5. Click **Deploy**
-
-### Option 2 — Vercel CLI
-
-```bash
-npm i -g vercel
-cd rosary-mindset
-vercel
+**Change the admin password** before going live — open `index.html`, find:
 ```
-
-## Managing Users
-
-In `index.html`, find the `USERS` object near the top of the `<script>` tag:
-
-```javascript
-const USERS = {
-  'username': { password: 'password', name: 'Full Name', initials: 'FN', display: 'First N.' }
-};
+const ADMIN_PASSWORD = 'rosaryadmin2024';
 ```
+and replace with your own password.
 
-Add or update entries to create accounts for each learner.
+## Admin Panel Features
+- **Create accounts** — enter a full name, username, and password for each new learner
+- **View all accounts** — see every user and their section progress at a glance
+- **Remove accounts** — delete a learner and their progress data
+
+Accounts created in the admin panel are stored in the browser's localStorage on whatever device you use to administer the site.
+
+## Built-in Account (your demo account)
+| Username | Password |
+|----------|----------|
+| `journey` | `faith2024` |
+
+## Deploy to Vercel
+1. Create a GitHub repo and upload all three files
+2. Go to vercel.com → Add New Project → Import repo → Deploy
 
 ## Customizing the Sponsor
+Search `index.html` for `Michael Flanagan` to update the sponsor's name, phone, email, and parish.
 
-Search for `Michael Flanagan` in `index.html` to update the sponsor name, phone, email, and parish.
-
-## File Structure
-
-```
-rosary-mindset/
-  index.html    ← entire app (HTML + CSS + JS, single file)
-  vercel.json   ← Vercel routing config
-  README.md     ← this file
-```
+## Color Palette
+- Deep Evergreen `#183A2A`
+- Old Gold `#B8945E`
+- Warm Cream `#FBF8F2`
+- Bronze `#8B6A44`
+- Charcoal `#2A2A2A`
